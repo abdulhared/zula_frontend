@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAU IMS — Admin Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:       #1a6b3a;
+      --green-mid:   #238a4a;
+      --green-light: #e8f5ee;
+      --green-pale:  #f2faf5;
+      --green-border:#b2d9c0;
+      --gold:        #c8a84b;
+      --white:       #ffffff;
+      --text:        #1a2e22;
+      --text-mid:    #3d5a47;
+      --text-soft:   #6b8a74;
+      --danger:      #c0392b;
+      --danger-bg:   #fdf0ee;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--green-pale);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(26,107,58,0.07) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(26,107,58,0.07) 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 30px,
+          rgba(26,107,58,0.03) 30px,
+          rgba(26,107,58,0.03) 31px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(26,107,58,0.06), 0 20px 60px rgba(26,107,58,0.12);
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem 2.5rem 2rem;
+      border: 1px solid var(--green-border);
+      animation: slideUp 0.5s ease both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo section */
+    .logo-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.75rem;
+      text-align: center;
+    }
+
+    .logo-img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--green-border);
+      box-shadow: 0 4px 16px rgba(26,107,58,0.15);
+      margin-bottom: 0.85rem;
+    }
+
+    .logo-fallback {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+      border: 3px solid var(--green-border);
+      font-family: 'Merriweather', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    .uni-name {
+      font-family: 'Merriweather', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 0.03em;
+      line-height: 1.3;
+    }
+
+    .uni-sub {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--green-border), transparent);
+      margin-bottom: 1.75rem;
+    }
+
+    /* Form heading */
+    .form-heading {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-heading h1 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    .form-heading p {
+      font-size: 0.83rem;
+      color: var(--text-soft);
+    }
+
+    /* Fields */
+    .field-group {
+      margin-bottom: 1.1rem;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    label svg { width: 14px; height: 14px; color: var(--green); flex-shrink: 0; }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1.5px solid var(--green-border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--green-pale);
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--green);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(26,107,58,0.1);
+    }
+
+    input.is-invalid {
+      border-color: var(--danger);
+      background: var(--danger-bg);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap input { padding-right: 2.8rem; }
+
+    .toggle-pw {
+      position: absolute;
+      right: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.2rem;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+    }
+
+    .toggle-pw svg { width: 16px; height: 16px; }
+    .toggle-pw:hover { color: var(--green); }
+
+    .field-error {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--danger);
+      margin-top: 0.3rem;
+      min-height: 1em;
+    }
+
+    /* Login meta */
+    .login-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.8rem;
+      color: var(--text-mid);
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    .remember-me input[type="checkbox"] { accent-color: var(--green); width: 14px; height: 14px; }
+
+    .forgot-link {
+      font-size: 0.8rem;
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* Error box */
+    .login-error {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--danger-bg);
+      border: 1px solid #f5c6c2;
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      color: var(--danger);
+    }
+
+    .login-error svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .login-error[hidden] { display: none; }
+
+    /* Submit button */
+    .btn-login {
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 14px rgba(26,107,58,0.3);
+      letter-spacing: 0.02em;
+    }
+
+    .btn-login:hover { background: var(--green-mid); box-shadow: 0 6px 20px rgba(26,107,58,0.35); }
+    .btn-login:active { transform: scale(0.99); }
+    .btn-login:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+    .btn-icon svg { width: 18px; height: 18px; }
+
+    .btn-spinner[hidden] { display: none; }
+    .btn-spinner .spin {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Footer */
+    .login-footer {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .back-link {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--green); }
+    .back-link svg { width: 14px; height: 14px; }
+
+    .demo-hint {
+      margin-top: 0.85rem;
+      background: var(--green-light);
+      border: 1px solid var(--green-border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      color: var(--text-mid);
+      text-align: center;
+    }
+
+    .demo-hint span { font-weight: 600; color: var(--green); }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+
+    <!-- Logo -->
+    <div class="logo-section">
+      <img
+        src="images/gau-logo.png"
+        alt="Garissa University Logo"
+        class="logo-img"
+        onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';"
+      />
+      <div class="logo-fallback" id="logoFallback" style="display:none;">GU</div>
+      <div class="uni-name">Garissa University</div>
+      <div class="uni-sub">Oasis of Innovation · ICT Department</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="form-heading">
+      <h1>Staff Sign In</h1>
+      <p>Access the ICT helpdesk management console</p>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div class="field-group">
+        <label for="adminEmail">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M2 6.5l6 3.5 6-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Staff Email
+        </label>
+        <input type="email" id="adminEmail" placeholder="staff@gau.ac.ke" autocomplete="email" required />
+        <span class="field-error" id="err-adminEmail"></span>
+      </div>
+
+      <div class="field-group">
+        <label for="adminPassword">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="8" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11" r="1" fill="currentColor"/></svg>
+          Password
+        </label>
+        <div class="password-wrap">
+          <input type="password" id="adminPassword" placeholder="Enter your password" autocomplete="current-password" required />
+          <button type="button" class="toggle-pw" id="togglePw" aria-label="Toggle password visibility">
+            <svg id="eyeIcon" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="8" rx="6" ry="4" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <span class="field-error" id="err-adminPassword"></span>
+      </div>
+
+      <div class="login-meta">
+        <label class="remember-me">
+          <input type="checkbox" id="rememberMe" />
+          Remember me
+        </label>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <div class="login-error" id="loginError" hidden>
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span id="loginErrorMsg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <button type="submit" class="btn-login" id="loginBtn">
+        <span class="btn-label">Sign In to Dashboard</span>
+        <span class="btn-icon">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="btn-spinner" hidden><span class="spin"></span></span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <a href="user.html" class="back-link">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M10 4l-4 4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to Student Portal
+      </a>
+      <div class="demo-hint">
+        <span>Demo credentials:</span> admin@gau.ac.ke / admin123
+      </div>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+    const API       = 'http://localhost:5000/api';
+    const TOKEN_KEY = 'gau_admin_jwt';
+    const NAME_KEY  = 'gau_admin_name';
+
+    // Already logged in? Go straight to dashboard
+    if (sessionStorage.getItem(TOKEN_KEY)) {
+      window.location.replace('dashboard.html');
+    }
+
+    const loginForm     = document.getElementById('loginForm');
+    const loginBtn      = document.getElementById('loginBtn');
+    const loginError    = document.getElementById('loginError');
+    const loginErrorMsg = document.getElementById('loginErrorMsg');
+    const togglePw      = document.getElementById('togglePw');
+    const adminPassword = document.getElementById('adminPassword');
+    const eyeIcon       = document.getElementById('eyeIcon');
+
+    togglePw.addEventListener('click', () => {
+      const isHidden = adminPassword.type === 'password';
+      adminPassword.type = isHidden ? 'text' : 'password';
+      eyeIcon.innerHTML = isHidden
+        ? `<ellipse cx="8" cy="8" rx="6" ry="4" stroke="currentColor" stroke-width="1.4"/>
+           <line x1="3" y1="3" x2="13" y2="13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>`
+        : `<ellipse cx="8" cy="8" rx="6" ry="4" stroke="currentColor" stroke-width="1.4"/>
+           <circle cx="8" cy="8" r="1.5" fill="currentColor"/>`;
+    });
+
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const email    = document.getElementById('adminEmail').value.trim();
+      const password = adminPassword.value;
+
+      let valid = true;
+      if (!email) {
+        document.getElementById('err-adminEmail').textContent = 'Please enter your email.';
+        document.getElementById('adminEmail').classList.add('is-invalid');
+        valid = false;
+      }
+      if (!password) {
+        document.getElementById('err-adminPassword').textContent = 'Please enter your password.';
+        adminPassword.classList.add('is-invalid');
+        valid = false;
+      }
+      if (!valid) return;
+
+      setLoading(true);
+      loginError.hidden = true;
+
+      try {
+        const res  = await fetch(`${API}/auth/login`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          sessionStorage.setItem(TOKEN_KEY, data.access_token);
+          sessionStorage.setItem(NAME_KEY, data.name || email.split('@')[0]);
+          window.location.href = 'dashboard.html';
+        } else {
+          setLoading(false);
+          loginErrorMsg.textContent = data.error || 'Invalid email or password.';
+          loginError.hidden = false;
+          document.getElementById('adminEmail').classList.add('is-invalid');
+          adminPassword.classList.add('is-invalid');
+        }
+      } catch {
+        setLoading(false);
+        loginErrorMsg.textContent = 'Cannot reach the server. Check that the backend is running.';
+        loginError.hidden = false;
+      }
+    });
+
+    function setLoading(on) {
+      loginBtn.disabled = on;
+      loginBtn.querySelector('.btn-label').hidden   = on;
+      loginBtn.querySelector('.btn-icon').hidden    = on;
+      loginBtn.querySelector('.btn-spinner').hidden = !on;
+    }
+
+    ['adminEmail', 'adminPassword'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', () => {
+        document.getElementById(id).classList.remove('is-invalid');
+        document.getElementById('err-' + id).textContent = '';
+        loginError.hidden = true;
+      });
+    });
+  </script>
+</body>
+</html>

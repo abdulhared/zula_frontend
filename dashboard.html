@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAU IMS — Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ── Lighter green palette (matches user.html / user.css) ── */
+      --green:        #2d5a3d;
+      --green-mid:    #3d7a53;
+      --green-light:  #e8f3ec;
+      --green-pale:   #f4faf6;
+      --green-border: #b8d9c4;
+      --gold:         #c8a84b;
+      --white:        #ffffff;
+      --text:         #1a2e22;
+      --text-mid:     #3d5a47;
+      --text-soft:    #6b8a74;
+      --amber:        #d97706;
+      --amber-bg:     #fef3c7;
+      --resolved:     #2d5a3d;
+      --resolved-bg:  #e8f3ec;
+      --danger:       #c0392b;
+      --danger-bg:    #fdf0ee;
+      --shadow:       0 1px 3px rgba(45,90,61,0.08), 0 8px 24px rgba(45,90,61,0.08);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--green-pale);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    .admin-header {
+      background: var(--green);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .logo-img-sm {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+
+    .logo-fallback-sm {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Merriweather', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+
+    .logo-text .title {
+      font-family: 'Merriweather', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: white;
+      display: block;
+      line-height: 1.2;
+    }
+
+    .logo-text .sub {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .admin-user {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .admin-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: white;
+    }
+
+    .admin-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 6px;
+      color: white;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-logout:hover { background: rgba(255,255,255,0.22); }
+    .btn-logout svg { width: 14px; height: 14px; }
+
+    /* ── HERO ── */
+    .dash-hero {
+      background: var(--white);
+      border-bottom: 1px solid var(--green-border);
+      padding: 2rem 0 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--green-mid);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .eyebrow-line {
+      width: 24px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
+    .dash-title {
+      font-family: 'Merriweather', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .dash-title em {
+      font-style: italic;
+      color: var(--green);
+    }
+
+    .dash-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-soft);
+      margin-top: 0.3rem;
+    }
+
+    .btn-refresh {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      background: var(--green-light);
+      border: 1.5px solid var(--green-border);
+      border-radius: 8px;
+      color: var(--green);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-refresh:hover { background: var(--green-border); }
+    .btn-refresh svg { width: 16px; height: 16px; }
+    .btn-refresh.spinning svg { animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid var(--green-border);
+    }
+
+    .stat-block {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      text-align: center;
+    }
+
+    .stat-divider {
+      width: 1px;
+      background: var(--green-border);
+      margin: 0.75rem 0;
+    }
+
+    .stat-num {
+      display: block;
+      font-family: 'Merriweather', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .stat-num.amber { color: var(--amber); }
+    .stat-num.green { color: var(--green); }
+
+    .stat-lbl {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.2rem;
+    }
+
+    /* ── CONTROLS ── */
+    .controls-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--green-border);
+      padding: 0.85rem 0;
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+    }
+
+    .controls-inner {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-field {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.85rem;
+      background: var(--green-pale);
+      border: 1.5px solid var(--green-border);
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .search-field:focus-within { border-color: var(--green); }
+    .search-field svg { width: 16px; height: 16px; color: var(--text-soft); flex-shrink: 0; }
+
+    .search-field input {
+      border: none;
+      background: none;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text);
+      width: 100%;
+    }
+
+    .search-field input::placeholder { color: var(--text-soft); }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .filter-tab {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      border: 1.5px solid var(--green-border);
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--text-mid);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-tab:hover { border-color: var(--green); color: var(--green); }
+
+    .filter-tab.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    .tab-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-amber { background: var(--amber); }
+    .dot-green { background: var(--green-mid); }
+
+    /* ── MAIN ── */
+    .dash-main {
+      flex: 1;
+      padding: 1.5rem 0 3rem;
+    }
+
+    /* Loading skeleton */
+    .table-state { padding: 1rem 0; }
+
+    .skeleton-row {
+      height: 52px;
+      background: linear-gradient(90deg, var(--green-light) 25%, var(--white) 50%, var(--green-light) 75%);
+      background-size: 200% 100%;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      animation: shimmer 1.4s infinite;
+    }
+
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-soft);
+    }
+
+    .empty-state svg { width: 72px; height: 72px; margin-bottom: 1rem; color: var(--green-border); }
+    .empty-state h3 { font-family: 'Merriweather', serif; font-size: 1.1rem; color: var(--text-mid); margin-bottom: 0.4rem; }
+    .empty-state p  { font-size: 0.85rem; }
+    .table-state[hidden] { display: none; }
+
+    /* Table */
+    .table-container {
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--green-border);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .table-container[hidden] { display: none; }
+
+    .tickets-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    /* Lighter green thead — was --green (dark), now green-mid for softer look */
+    .tickets-table thead {
+      background: var(--green-mid);
+      color: white;
+    }
+
+    .tickets-table th {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .tickets-table tbody tr {
+      border-bottom: 1px solid var(--green-light);
+      transition: background 0.15s;
+      cursor: pointer;
+      animation: fadeIn 0.3s ease both;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    .tickets-table tbody tr:last-child { border-bottom: none; }
+    .tickets-table tbody tr:hover { background: var(--green-pale); }
+
+    .tickets-table td {
+      padding: 0.85rem 1rem;
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .tickets-table td:first-child {
+      font-family: 'DM Sans', monospace;
+      font-size: 0.8rem;
+      color: var(--text-mid);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-open     { background: var(--amber-bg); color: var(--amber); }
+    .badge-resolved { background: var(--resolved-bg); color: var(--resolved); }
+
+    .btn-row-view {
+      padding: 0.3rem 0.75rem;
+      background: var(--green-light);
+      border: 1px solid var(--green-border);
+      border-radius: 5px;
+      color: var(--green);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-row-view:hover { background: var(--green-border); }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 30, 15, 0.45);
+      backdrop-filter: blur(3px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: fadeInBg 0.2s ease;
+    }
+
+    @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
+    .modal-backdrop[hidden] { display: none; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: slideUpModal 0.25s ease;
+      border: 1px solid var(--green-border);
+    }
+
+    @keyframes slideUpModal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+    /* Modal header — lighter green */
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      background: var(--green);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .modal-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .modal-heading {
+      font-family: 'Merriweather', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .modal-sub {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.65);
+      margin-top: 0.15rem;
+    }
+
+    .modal-close {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .modal-close:hover { background: rgba(255,255,255,0.25); }
+    .modal-close svg { width: 14px; height: 14px; }
+
+    .modal-body { padding: 1.25rem 1.5rem; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .detail-full { grid-column: 1 / -1; }
+
+    .detail-field {
+      background: var(--green-pale);
+      border: 1px solid var(--green-border);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+    }
+
+    .detail-label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .detail-val {
+      font-size: 0.88rem;
+      color: var(--text);
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .mono { font-family: monospace; }
+
+    .modal-actions {
+      padding: 0 1.5rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid;
+      transition: all 0.15s;
+    }
+
+    .btn-action svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-email {
+      background: var(--green-light);
+      border-color: var(--green-border);
+      color: var(--green);
+    }
+    .btn-email:hover:not(:disabled) { background: var(--green-border); }
+
+    .btn-notify-resolved {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+    .btn-notify-resolved:hover:not(:disabled) { background: #dbeafe; }
+
+    .btn-resolve {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+    .btn-resolve:hover:not(:disabled) { background: var(--green-mid); }
+
+    .modal-feedback {
+      margin: 0 1.5rem 1rem;
+      padding: 0.6rem 0.85rem;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .feedback-ok  { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+    .feedback-err { background: var(--danger-bg); color: var(--danger); border: 1px solid #f5c6c2; }
+    .modal-feedback:empty { display: none; }
+
+    /* ── TOAST ── */
+    .toast-wrap {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 300;
+      transform: translateY(calc(100% + 2rem));
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .toast-wrap.show { transform: translateY(0); opacity: 1; }
+
+    .toast-inner {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--white);
+      border: 1px solid var(--green-border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      min-width: 260px;
+      max-width: 340px;
+    }
+
+    .toast-icon-wrap {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .toast-icon-ok  { background: var(--green-light); color: var(--green); }
+    .toast-icon-err { background: var(--danger-bg); color: var(--danger); }
+    .toast-icon-wrap svg { width: 16px; height: 16px; }
+
+    .toast-text strong { display: block; font-size: 0.85rem; color: var(--text); }
+    .toast-text span   { font-size: 0.78rem; color: var(--text-soft); }
+
+    .toast-dismiss {
+      margin-left: auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-soft);
+      padding: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    .toast-dismiss:hover { color: var(--text); }
+    .toast-dismiss svg { width: 14px; height: 14px; display: block; }
+
+    /* ── FOOTER — matches user.html style ── */
+    .site-footer {
+      border-top: 1px solid var(--green-border);
+      background: var(--white);
+      padding: 20px 0;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: var(--text-soft);
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: var(--green);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .footer-links a:hover { opacity: 0.75; }
+
+    .footer-sep { color: var(--green-border); }
+
+    .footer-admin-link {
+      font-size: 12px;
+      color: var(--text-soft) !important;
+      opacity: 0.6;
+    }
+
+    .footer-admin-link:hover { opacity: 1 !important; color: var(--green) !important; }
+
+    @media (max-width: 640px) {
+      .hero-inner { flex-direction: column; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .modal-actions { flex-direction: column; }
+      .admin-name { display: none; }
+      .stats-row { flex-wrap: wrap; }
+      .stat-block { min-width: 80px; }
+      .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header class="admin-header">
+    <div class="header-inner">
+      <a href="#" class="logo-wrap">
+        <img
+          src="images/gau-logo.png"
+          alt="GAU Logo"
+          class="logo-img-sm"
+          onerror="this.style.display='none'; document.getElementById('logoSmFallback').style.display='flex';"
+        />
+        <div class="logo-fallback-sm" id="logoSmFallback" style="display:none;">GU</div>
+        <div class="logo-text">
+          <span class="title">GAU IMS</span>
+          <span class="sub">Admin Dashboard</span>
+        </div>
+      </a>
+
+      <div class="header-right">
+        <div class="admin-user">
+          <div class="admin-avatar" id="adminAvatar">A</div>
+          <span class="admin-name" id="adminNameDisplay">Administrator</span>
+        </div>
+        <button class="btn-logout" id="logoutBtn">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="dash-hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow">
+            <span class="eyebrow-line"></span>
+            Staff Portal · Complaint Management
+          </div>
+          <h1 class="dash-title">Ticket <em>Management</em></h1>
+          <p class="dash-subtitle">Review, respond to, and resolve student support requests.</p>
+        </div>
+        <button class="btn-refresh" id="refreshBtn">
+          <svg id="refreshIcon" viewBox="0 0 20 20" fill="none">
+            <path d="M4 10a6 6 0 0111.3-2.8M16 4v4h-4M16 10a6 6 0 01-11.3 2.8M4 16v-4h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-block">
+          <span class="stat-num" id="statTotal">—</span>
+          <span class="stat-lbl">Total</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-block">
+          <span class="stat-num amber" id="statOpen">—</span>
+          <span class="stat-lbl">Open</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-block">
+          <span class="stat-num green" id="statResolved">—</span>
+          <span class="stat-lbl">Resolved</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-block">
+          <span class="stat-num" id="statToday">—</span>
+          <span class="stat-lbl">Today</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-block">
+          <span class="stat-num" id="statRate">—</span>
+          <span class="stat-lbl">Resolution Rate</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTROLS ── -->
+  <div class="controls-bar">
+    <div class="container controls-inner">
+      <div class="search-field">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="5.5" stroke="currentColor" stroke-width="1.8"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input type="search" id="searchInput" placeholder="Search by name, reg. number, issue…" />
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All Tickets</button>
+        <button class="filter-tab" data-filter="open">
+          <span class="tab-dot dot-amber"></span>Open
+        </button>
+        <button class="filter-tab" data-filter="resolved">
+          <span class="tab-dot dot-green"></span>Resolved
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TABLE ── -->
+  <main class="dash-main">
+    <div class="container">
+
+      <div class="table-state" id="loadingState">
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+      </div>
+
+      <div class="table-state empty-state" id="emptyState" hidden>
+        <svg viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.4"/>
+          <rect x="24" y="22" width="32" height="36" rx="3" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+          <line x1="30" y1="32" x2="50" y2="32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <line x1="30" y1="38" x2="50" y2="38" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <line x1="30" y1="44" x2="42" y2="44" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+        <h3>No tickets found</h3>
+        <p>Try adjusting your search or filter, or wait for new submissions.</p>
+      </div>
+
+      <div class="table-container" id="tableContainer" hidden>
+        <table class="tickets-table">
+          <thead>
+            <tr>
+              <th>Reg. Number</th>
+              <th>Student</th>
+              <th>Issue</th>
+              <th>Status</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ticketsBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER — matches user.html ── -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© 2025 Garissa University — ICT Department</span>
+      <div class="footer-links">
+        <a href="mailto:ict@gau.ac.ke">ict@gau.ac.ke</a>
+        <span class="footer-sep">·</span>
+        <a href="user.html" class="footer-admin-link">Student Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── MODAL ── -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalHeading">
+      <div class="modal-header">
+        <div>
+          <p class="modal-eyebrow">Ticket Detail</p>
+          <h2 class="modal-heading" id="modalHeading">Loading…</h2>
+          <p class="modal-sub" id="modalSub"></p>
+        </div>
+        <button class="modal-close" id="modalClose" aria-label="Close">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <span class="detail-label">Ticket ID</span>
+            <span class="detail-val mono" id="dId"></span>
+          </div>
+          <div class="detail-field">
+            <span class="detail-label">Status</span>
+            <span id="dStatusBadge"></span>
+          </div>
+          <div class="detail-field">
+            <span class="detail-label">Student Name</span>
+            <span class="detail-val" id="dName"></span>
+          </div>
+          <div class="detail-field">
+            <span class="detail-label">Reg. Number</span>
+            <span class="detail-val mono" id="dReg"></span>
+          </div>
+          <div class="detail-field">
+            <span class="detail-label">Email</span>
+            <span class="detail-val" id="dEmail"></span>
+          </div>
+          <div class="detail-field">
+            <span class="detail-label">Submitted</span>
+            <span class="detail-val" id="dDate"></span>
+          </div>
+          <div class="detail-field detail-full">
+            <span class="detail-label">Issue Description</span>
+            <span class="detail-val" id="dIssue"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── email actions ── -->
+      <div class="modal-actions">
+        <button class="btn-action btn-email" id="btnEmail">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M2 7l8 5 8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Send Received Notification
+        </button>
+        <button class="btn-action btn-notify-resolved" id="btnNotifyResolved">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M6 10l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Notify Resolution
+        </button>
+        <button class="btn-action btn-resolve" id="btnResolve">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 10l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Mark as Resolved
+        </button>
+      </div>
+
+      <div class="modal-feedback" id="modalFeedback"></div>
+    </div>
+  </div>
+
+  <!-- ── TOAST ── -->
+  <div class="toast-wrap" id="toast" role="status" aria-live="polite">
+    <div class="toast-inner">
+      <div class="toast-icon-wrap" id="toastIconWrap"></div>
+      <div class="toast-text">
+        <strong id="toastTitle">Done</strong>
+        <span id="toastMsg"></span>
+      </div>
+      <button class="toast-dismiss" onclick="dismissToast()">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const API       = 'http://localhost:5000/api';
+    const TOKEN_KEY = 'gau_admin_jwt';
+    const NAME_KEY  = 'gau_admin_name';
+
+    // ── Auth guard ──────────────────────────────────────────
+    if (!sessionStorage.getItem(TOKEN_KEY)) {
+      window.location.replace('admin.html');
+    }
+
+    function getToken()   { return sessionStorage.getItem(TOKEN_KEY); }
+    function clearAuth()  { sessionStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(NAME_KEY); }
+
+    function authHeaders() {
+      return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` };
+    }
+
+    // ── Show admin name ─────────────────────────────────────
+    const adminName = sessionStorage.getItem(NAME_KEY) || 'Admin';
+    document.getElementById('adminNameDisplay').textContent = adminName;
+    document.getElementById('adminAvatar').textContent      = adminName.charAt(0).toUpperCase();
+
+    // ── State ───────────────────────────────────────────────
+    let allTickets   = [];
+    let activeFilter = 'all';
+    let searchQuery  = '';
+    let currentTicket = null;
+
+    // ── DOM refs ────────────────────────────────────────────
+    const loadingState   = document.getElementById('loadingState');
+    const emptyState     = document.getElementById('emptyState');
+    const tableContainer = document.getElementById('tableContainer');
+    const ticketsBody    = document.getElementById('ticketsBody');
+    const searchInput    = document.getElementById('searchInput');
+    const refreshBtn     = document.getElementById('refreshBtn');
+    const logoutBtn      = document.getElementById('logoutBtn');
+    const statTotal      = document.getElementById('statTotal');
+    const statOpen       = document.getElementById('statOpen');
+    const statResolved   = document.getElementById('statResolved');
+    const statToday      = document.getElementById('statToday');
+    const statRate       = document.getElementById('statRate');
+    const modalBackdrop  = document.getElementById('modalBackdrop');
+    const modalClose     = document.getElementById('modalClose');
+    const btnEmail       = document.getElementById('btnEmail');
+    const btnNotifyResolved = document.getElementById('btnNotifyResolved');
+    const btnResolve     = document.getElementById('btnResolve');
+    const modalFeedback  = document.getElementById('modalFeedback');
+    const toast          = document.getElementById('toast');
+    const toastTitle     = document.getElementById('toastTitle');
+    const toastMsg       = document.getElementById('toastMsg');
+    const toastIW        = document.getElementById('toastIconWrap');
+
+    // ── Logout ──────────────────────────────────────────────
+    logoutBtn.addEventListener('click', async () => {
+      try { await fetch(`${API}/auth/logout`, { method: 'POST', headers: authHeaders() }); } catch {}
+      clearAuth();
+      window.location.href = 'admin.html';
+    });
+
+    // ── Protected fetch ─────────────────────────────────────
+    async function apiFetch(url, options = {}) {
+      const res = await fetch(url, { ...options, headers: { ...authHeaders(), ...(options.headers || {}) } });
+      if (res.status === 401) {
+        clearAuth();
+        window.location.href = 'admin.html';
+        throw new Error('token_expired');
+      }
+      return res;
+    }
+
+    // ── Load tickets ────────────────────────────────────────
+    async function loadTickets() {
+      showLoading(true);
+      try {
+        const res = await apiFetch(`${API}/tickets/list`);
+        if (!res.ok) throw new Error('API error');
+        const raw = await res.json();
+        allTickets = Array.isArray(raw) ? raw.map(normalise) : [];
+      } catch (err) {
+        if (err.message === 'token_expired') return;
+        allTickets = seedDemoData();
+      }
+      renderStats();
+      renderTable();
+      showLoading(false);
+    }
+
+    function normalise(t) {
+      return {
+        id: t.id, reg_number: t.reg_number || '—', std_name: t.std_name || '—',
+        std_email: t.std_email || '—', issue_type: t.issue_type || '—',
+        status: t.status || 'open', created_at: t.created_at || null,
+      };
+    }
+
+    // ── Stats ───────────────────────────────────────────────
+    function renderStats() {
+      const today    = new Date().toDateString();
+      const total    = allTickets.length;
+      const resolved = allTickets.filter(t => t.status === 'resolved').length;
+      statTotal.textContent    = total;
+      statOpen.textContent     = allTickets.filter(t => t.status === 'open').length;
+      statResolved.textContent = resolved;
+      statToday.textContent    = allTickets.filter(t => t.created_at && new Date(t.created_at).toDateString() === today).length;
+      statRate.textContent     = total > 0 ? Math.round((resolved / total) * 100) + '%' : '—';
+    }
+
+    // ── Table ───────────────────────────────────────────────
+    function renderTable() {
+      let rows = [...allTickets];
+      if (activeFilter !== 'all') rows = rows.filter(t => t.status === activeFilter);
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        rows = rows.filter(t =>
+          t.reg_number.toLowerCase().includes(q) ||
+          t.std_name.toLowerCase().includes(q)   ||
+          t.issue_type.toLowerCase().includes(q)
+        );
+      }
+      ticketsBody.innerHTML = '';
+      if (rows.length === 0) { tableContainer.hidden = true; emptyState.hidden = false; return; }
+      tableContainer.hidden = false; emptyState.hidden = true;
+      rows.forEach((ticket, i) => {
+        const tr = document.createElement('tr');
+        tr.style.animationDelay = `${i * 0.03}s`;
+        tr.innerHTML = `
+          <td>${esc(ticket.reg_number)}</td>
+          <td>${esc(ticket.std_name)}</td>
+          <td>${truncate(esc(ticket.issue_type), 55)}</td>
+          <td>${statusBadge(ticket.status)}</td>
+          <td>${fmtDate(ticket.created_at)}</td>
+          <td><button class="btn-row-view" data-id="${ticket.id}">View →</button></td>
+        `;
+        tr.addEventListener('click', e => { if (!e.target.classList.contains('btn-row-view')) openModal(ticket.id); });
+        tr.querySelector('.btn-row-view').addEventListener('click', e => { e.stopPropagation(); openModal(ticket.id); });
+        ticketsBody.appendChild(tr);
+      });
+    }
+
+    // ── Modal ───────────────────────────────────────────────
+    function openModal(id) {
+      const t = allTickets.find(t => t.id === id);
+      if (!t) return;
+      currentTicket = t;
+      modalFeedback.textContent = ''; modalFeedback.className = 'modal-feedback';
+      document.getElementById('modalHeading').textContent = `Ticket — ${t.reg_number}`;
+      document.getElementById('modalSub').textContent     = `Submitted ${fmtDate(t.created_at)}`;
+      document.getElementById('dId').textContent          = t.id;
+      document.getElementById('dStatusBadge').innerHTML   = statusBadge(t.status);
+      document.getElementById('dName').textContent        = t.std_name;
+      document.getElementById('dReg').textContent         = t.reg_number;
+      document.getElementById('dEmail').textContent       = t.std_email;
+      document.getElementById('dDate').textContent        = fmtDate(t.created_at);
+      document.getElementById('dIssue').textContent       = t.issue_type;
+      const resolved = t.status === 'resolved';
+      btnResolve.disabled = resolved; btnNotifyResolved.disabled = !resolved;
+      modalBackdrop.hidden = false; modalBackdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modalBackdrop.hidden = true; modalBackdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = ''; currentTicket = null;
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── Actions ─────────────────────────────────────────────
+    async function postAction(action, btnEl, loadingText, restoreHTML) {
+      if (!currentTicket) return;
+      btnEl.disabled = true; btnEl.textContent = loadingText;
+      try {
+        const res  = await apiFetch(`${API}/tickets/actions`, { method: 'POST', body: JSON.stringify({ ticket_id: currentTicket.id, action }) });
+        const data = await res.json();
+        return { ok: res.ok, data };
+      } catch (err) {
+        if (err.message === 'token_expired') return { ok: false, expired: true };
+        return { ok: false, offline: true };
+      } finally {
+        btnEl.disabled = false; btnEl.innerHTML = restoreHTML;
+      }
+    }
+
+    btnEmail.addEventListener('click', async () => {
+      const r = await postAction('send_email', btnEmail, 'Sending…', `<svg viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M2 7l8 5 8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> Send Received Notification`);
+      if (!r || r.expired) return;
+      r.offline ? setFeedback('✓ Demo mode: notification would be dispatched via Celery.', 'ok')
+      : r.ok    ? (setFeedback('✓ Acknowledgement queued for student.', 'ok'), showToast('Email Queued', 'Notification dispatched.', 'ok'))
+                : setFeedback('✕ ' + (r.data?.error || 'Failed.'), 'err');
+    });
+
+    btnNotifyResolved.addEventListener('click', async () => {
+      const r = await postAction('notify_resolved', btnNotifyResolved, 'Sending…', `<svg viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M6 10l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Notify Resolution`);
+      if (!r || r.expired) return;
+      r.offline ? setFeedback('✓ Demo mode: resolution notification queued.', 'ok')
+      : r.ok    ? (setFeedback('✓ Resolution notification sent.', 'ok'), showToast('Notified', `${currentTicket.std_name} has been notified.`, 'ok'))
+                : setFeedback('✕ ' + (r.data?.error || 'Failed.'), 'err');
+    });
+
+    btnResolve.addEventListener('click', async () => {
+      const r = await postAction('resolved', btnResolve, 'Resolving…', `<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 10l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Mark as Resolved`);
+      if (!r || r.expired) return;
+      if (r.offline || r.ok) {
+        patchTicketStatus(currentTicket.id, 'resolved');
+        setFeedback('✓ Ticket marked as resolved.', 'ok');
+        showToast('Resolved', `${currentTicket.std_name}'s ticket is closed.`, 'ok');
+      } else { setFeedback('✕ ' + (r.data?.error || 'Could not resolve.'), 'err'); }
+    });
+
+    function patchTicketStatus(id, status) {
+      const idx = allTickets.findIndex(t => t.id === id);
+      if (idx !== -1) allTickets[idx].status = status;
+      if (currentTicket?.id === id) currentTicket.status = status;
+      btnResolve.disabled = true; btnNotifyResolved.disabled = false;
+      renderStats(); renderTable();
+      document.getElementById('dStatusBadge').innerHTML = statusBadge(status);
+    }
+
+    function setFeedback(msg, type) {
+      modalFeedback.textContent = msg;
+      modalFeedback.className = 'modal-feedback ' + (type === 'ok' ? 'feedback-ok' : 'feedback-err');
+    }
+
+    // ── Filters / Search / Refresh ──────────────────────────
+    document.querySelectorAll('.filter-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        renderTable();
+      });
+    });
+
+    searchInput?.addEventListener('input', () => { searchQuery = searchInput.value.trim(); renderTable(); });
+
+    refreshBtn?.addEventListener('click', async () => {
+      refreshBtn.classList.add('spinning');
+      await loadTickets();
+      refreshBtn.classList.remove('spinning');
+      showToast('Refreshed', 'Ticket list is up to date.', 'ok');
+    });
+
+    // ── Helpers ─────────────────────────────────────────────
+    function showLoading(on) {
+      loadingState.hidden = !on;
+      if (on) { tableContainer.hidden = true; emptyState.hidden = true; }
+    }
+
+    function statusBadge(s) {
+      return s === 'resolved'
+        ? `<span class="badge badge-resolved">Resolved</span>`
+        : `<span class="badge badge-open">Open</span>`;
+    }
+
+    function fmtDate(dt) {
+      if (!dt) return '—';
+      try { return new Date(dt).toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+      catch { return String(dt); }
+    }
+
+    function truncate(str, max) { return str.length > max ? str.slice(0, max) + '…' : str; }
+
+    function esc(str) {
+      return String(str ?? '—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    let toastTimer;
+    function showToast(title, msg, type = 'ok') {
+      toastTitle.textContent = title; toastMsg.textContent = msg;
+      const isOk = type === 'ok';
+      toastIW.className = 'toast-icon-wrap ' + (isOk ? 'toast-icon-ok' : 'toast-icon-err');
+      toastIW.innerHTML = isOk
+        ? `<svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4.5 4.5L16 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+        : `<svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 5000);
+    }
+
+    window.dismissToast = () => { toast.classList.remove('show'); clearTimeout(toastTimer); };
+
+    // ── Demo seed data ──────────────────────────────────────
+    function seedDemoData() {
+      const students = [
+        { name:'Amina Hassan',  reg:'GAU/2024/0011', email:'amina.hassan@students.gau.ac.ke' },
+        { name:'Mohamed Osman', reg:'GAU/2023/0087', email:'mohamed.osman@students.gau.ac.ke' },
+        { name:'Fatuma Ali',    reg:'GAU/2024/0203', email:'fatuma.ali@students.gau.ac.ke' },
+        { name:'Ahmed Yusuf',   reg:'GAU/2022/0155', email:'ahmed.yusuf@students.gau.ac.ke' },
+        { name:'Hodan Abdi',    reg:'GAU/2024/0319', email:'hodan.abdi@students.gau.ac.ke' },
+        { name:'Safia Warsame', reg:'GAU/2024/0502', email:'safia.warsame@students.gau.ac.ke' },
+        { name:'Omar Farah',    reg:'GAU/2022/0099', email:'omar.farah@students.gau.ac.ke' },
+        { name:'Nasra Ibrahim', reg:'GAU/2024/0611', email:'nasra.ibrahim@students.gau.ac.ke' },
+      ];
+      const issues = [
+        '[Network / Wi-Fi] Cannot connect to campus Wi-Fi in Block C.',
+        '[Student Portal Access] Unable to log into student portal since Friday.',
+        '[Email Account] Student email not receiving messages.',
+        '[Hardware / Device] Lab computer in Room 204 keeps restarting.',
+        '[Software / Application] Microsoft Office activation failing.',
+        '[Printing] Library printer shows offline.',
+        '[Password Reset] Portal password reset link expired.',
+        '[Network / Wi-Fi] Wi-Fi disconnecting in Library reading room.',
+      ];
+      const now = Date.now();
+      return students.map((s, i) => ({
+        id: `demo-${i}-${Math.random().toString(36).slice(2,9)}`,
+        reg_number: s.reg, std_name: s.name, std_email: s.email,
+        issue_type: issues[i], status: i % 4 === 3 ? 'resolved' : 'open',
+        created_at: new Date(now - i * 1000 * 60 * 60 * (i + 2)).toISOString(),
+      }));
+    }
+
+    // ── Boot ────────────────────────────────────────────────
+    loadTickets();
+  </script>
+</body>
+</html>
